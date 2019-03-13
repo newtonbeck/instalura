@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('screen');
 
@@ -8,7 +8,8 @@ export default class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      foto: props.foto
+      foto: props.foto,
+      textoComentario: ''
     }
   }
 
@@ -62,6 +63,32 @@ export default class Post extends Component {
     );
   }
 
+  adicionaComentario = () => {
+    const { foto, textoComentario } = this.state;
+
+    if (textoComentario === '') {
+      return;
+    }
+
+    const novoComentario = {
+      login: 'meuUsuario',
+      texto: textoComentario
+    };
+
+    this.setState({
+      foto: {
+        ...foto,
+        comentarios: [
+          ...foto.comentarios,
+          novoComentario
+        ]
+      },
+      textoComentario: ''
+    });
+
+    this.inputComentario.clear();
+  }
+
   render() {
     const { foto } = this.state;
     return (
@@ -78,6 +105,22 @@ export default class Post extends Component {
           { this.exibeLikers() }
         </View>
         { this.exibeLegenda() }
+        { foto.comentarios.map((comentario) => (
+          <View style={styles.comentario}>
+            <Text style={styles.tituloComentario}>{ comentario.login }</Text>
+            <Text>{ comentario.texto }</Text>
+          </View>
+        )) }
+        <View style={styles.novoComentario}>
+          <TextInput 
+            ref={input => this.inputComentario = input}
+            placeholder='Digite seu comentário...' 
+            style={styles.campoComentario}
+            onChangeText={(text) => this.setState({textoComentario: text})} />
+          <TouchableOpacity onPress={this.adicionaComentario}>
+            <Text>Publicar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -117,5 +160,11 @@ const styles = StyleSheet.create({
   tituloComentario: {
     fontWeight: 'bold',
     marginRight: 5,
+  },
+  novoComentario: {
+    flexDirection: 'row',
+  },
+  campoComentario: {
+    flex: 1,
   }
 });
