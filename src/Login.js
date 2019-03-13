@@ -35,6 +35,8 @@ export default class Login extends Component {
       .then(token => {
         AsyncStorage.setItem('token', token);
         AsyncStorage.setItem('usuario', usuario);
+
+        this.props.navigation.navigate('Feed');
       })
       .catch((error) => {
         alert(error.message);
