@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, AsyncStorage } from 'react-native';
 import Post from './Post';
 
 export default class Feed extends Component {
@@ -12,37 +12,52 @@ export default class Feed extends Component {
   }
 
   componentDidMount() {
-    fetch('https://instalura-api.herokuapp.com/api/public/fotos/rafael')
-    .then(resposta => resposta.json())
-    .then(json => this.setState({fotos: json}));
+    AsyncStorage.getItem('token')
+      .then(token => new Headers({
+        'X-AUTH-TOKEN': token
+      }))
+      .then(headers => fetch('https://instalura-api.herokuapp.com/api/fotos', { headers }))
+      .then(resposta => resposta.json())
+      .then(json => this.setState({fotos: json}));
   }
 
   like = (idFoto) => {
     const { fotos } = this.state;
     const foto = fotos.find((foto) => foto.id === idFoto);
 
-    let novosLikers = [];
-    // Adiciona/remove meu usuário da lista de likers
-    if (!foto.likeada) {
-      novosLikers = [
-        ...foto.likers,
-        { login: 'meuUsuario' }
-      ];
-    } else {
-      novosLikers = foto.likers.filter(({ login }) => login !== 'meuUsuario');
-    }
+    AsyncStorage.getItem('usuario')
+      .then(usuario => {
+        let novosLikers = [];
+        // Adiciona/remove meu usuário da lista de likers
+        if (!foto.likeada) {
+          novosLikers = [
+            ...foto.likers,
+            { login: usuario }
+          ];
+        } else {
+          novosLikers = foto.likers.filter(({ login }) => login !== usuario);
+        }
 
-    const fotoAtualizada = {
-      ...foto,
-      likeada: !foto.likeada,
-      likers: novosLikers
-    };
+        const fotoAtualizada = {
+          ...foto,
+          likeada: !foto.likeada,
+          likers: novosLikers
+        };
 
-    const fotosAtualizadas = fotos.map((foto) => foto.id === idFoto ? fotoAtualizada : foto);
+        const fotosAtualizadas = fotos.map((foto) => foto.id === idFoto ? fotoAtualizada : foto);
 
-    this.setState({
-      fotos: fotosAtualizadas
-    });
+        this.setState({
+          fotos: fotosAtualizadas
+        });
+      });
+    
+    AsyncStorage.getItem('token')
+      .then(token => fetch(`https://instalura-api.herokuapp.com/api/fotos/${idFoto}/like`, {
+          method: 'POST',
+          headers: new Headers({
+            'X-AUTH-TOKEN': token
+          })
+        }));
   }
 
   adicionaComentario = (idFoto, textoComentario, inputComentario) => {
