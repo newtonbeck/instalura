@@ -29,34 +29,8 @@ export default class Post extends Component {
     );
   }
 
-  adicionaComentario = (textoComentario, inputComentario) => {
-    const { foto } = this.state;
-
-    if (textoComentario === '') {
-      return;
-    }
-
-    const novoComentario = {
-      login: 'meuUsuario',
-      texto: textoComentario
-    };
-
-    this.setState({
-      foto: {
-        ...foto,
-        comentarios: [
-          ...foto.comentarios,
-          novoComentario
-        ]
-      }
-    });
-
-    inputComentario.clear();
-  }
-
   render() {
-    const { foto } = this.state;
-    const { likeCallback } = this.props;
+    const { foto, likeCallback, adicionaComentarioCallback } = this.props;
 
     return (
       <View style={styles.container}>
@@ -65,7 +39,7 @@ export default class Post extends Component {
           <Text>{foto.loginUsuario}</Text>
         </View>
         <Image source={{uri: foto.urlFoto}} style={styles.foto} />
-        <Likes foto={this.props.foto} likeCallback={likeCallback} />
+        <Likes foto={foto} likeCallback={likeCallback} />
         { this.exibeLegenda() }
         { foto.comentarios.map((comentario) => (
           <View style={styles.comentario}>
@@ -74,7 +48,8 @@ export default class Post extends Component {
           </View>
         )) }
         <InputComentario
-          adicionaComentarioCallback={this.adicionaComentario} />
+          foto={foto}
+          adicionaComentarioCallback={adicionaComentarioCallback} />
       </View>
     );
   }

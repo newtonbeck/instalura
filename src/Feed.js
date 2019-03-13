@@ -45,6 +45,36 @@ export default class Feed extends Component {
     });
   }
 
+  adicionaComentario = (idFoto, textoComentario, inputComentario) => {
+    const { fotos } = this.state;
+    const foto = fotos.find((foto) => foto.id === idFoto);
+
+    if (textoComentario === '') {
+      return;
+    }
+
+    const novoComentario = {
+      login: 'meuUsuario',
+      texto: textoComentario
+    };
+
+    const fotoAtualizada = {
+      ...foto,
+      comentarios: [
+        ...foto.comentarios,
+        novoComentario
+      ]
+    };
+
+    const fotosAtualizadas = fotos.map((foto) => foto.id === idFoto ? fotoAtualizada : foto);
+
+    this.setState({
+      fotos: fotosAtualizadas
+    });
+
+    inputComentario.clear();
+  }
+
   render() {
     return (
       <FlatList
@@ -52,7 +82,7 @@ export default class Feed extends Component {
         data={this.state.fotos}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => (
-          <Post likeCallback={this.like} foto={item} />
+          <Post adicionaComentarioCallback={this.adicionaComentario} likeCallback={this.like} foto={item} />
         )}
       />
     );

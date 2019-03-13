@@ -11,7 +11,11 @@ export default class InputComentario extends Component {
   }
 
   adicionaComentario = () => {
-    this.props.adicionaComentarioCallback(this.state.textoComentario, this.inputComentario)
+    const { adicionaComentarioCallback, foto } = this.props;
+    const { textoComentario } = this.state;
+
+    adicionaComentarioCallback(foto.id, textoComentario, this.inputComentario)
+
     this.setState({
       textoComentario: ''
     });
