@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, Image, Dimensions, StyleSheet } from 'react-native';
 import InputComentario from './InputComentario';
+import Likes from './Likes';
 
 const { width } = Dimensions.get('screen');
 
@@ -11,10 +12,6 @@ export default class Post extends Component {
     this.state = {
       foto: props.foto,
     }
-  }
-
-  carregaIcone = (likeada) => {
-    return likeada ? require('../assets/heart_filled.png') : require('../assets/heart_not_filled.png');
   }
 
   like = () => {
@@ -38,14 +35,6 @@ export default class Post extends Component {
         likers: novosLikers
       }
     });
-  }
-
-  exibeLikers = () => {
-    const { foto: { likers } } = this.state;
-
-    return (
-      <Text>{ likers.length } { likers.length > 1 ? 'curtiram' : 'curtiu' }</Text>
-    );
   }
 
   exibeLegenda = () => {
@@ -97,12 +86,7 @@ export default class Post extends Component {
           <Text>{foto.loginUsuario}</Text>
         </View>
         <Image source={{uri: foto.urlFoto}} style={styles.foto} />
-        <View style={styles.rodape}>
-          <TouchableOpacity onPress={this.like}>
-            <Image style={styles.botaoDeLike} source={this.carregaIcone(foto.likeada)} />
-          </TouchableOpacity>
-          { this.exibeLikers() }
-        </View>
+        <Likes likeada={foto.likeada} likers={foto.likers} likeCallback={this.like} />
         { this.exibeLegenda() }
         { foto.comentarios.map((comentario) => (
           <View style={styles.comentario}>
@@ -134,16 +118,6 @@ const styles = StyleSheet.create({
   foto: {
     width: width,
     height: width    
-  },
-  rodape: {
-    margin: 10,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  botaoDeLike: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
   },
   comentario: {
     flexDirection: 'row',
