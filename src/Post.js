@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import InputComentario from './InputComentario';
 
 const { width } = Dimensions.get('screen');
 
@@ -9,7 +10,6 @@ export default class Post extends Component {
     super(props);
     this.state = {
       foto: props.foto,
-      textoComentario: ''
     }
   }
 
@@ -63,8 +63,8 @@ export default class Post extends Component {
     );
   }
 
-  adicionaComentario = () => {
-    const { foto, textoComentario } = this.state;
+  adicionaComentario = (textoComentario, inputComentario) => {
+    const { foto } = this.state;
 
     if (textoComentario === '') {
       return;
@@ -82,11 +82,10 @@ export default class Post extends Component {
           ...foto.comentarios,
           novoComentario
         ]
-      },
-      textoComentario: ''
+      }
     });
 
-    this.inputComentario.clear();
+    inputComentario.clear();
   }
 
   render() {
@@ -111,16 +110,8 @@ export default class Post extends Component {
             <Text>{ comentario.texto }</Text>
           </View>
         )) }
-        <View style={styles.novoComentario}>
-          <TextInput 
-            ref={input => this.inputComentario = input}
-            placeholder='Digite seu comentário...' 
-            style={styles.campoComentario}
-            onChangeText={(text) => this.setState({textoComentario: text})} />
-          <TouchableOpacity onPress={this.adicionaComentario}>
-            <Text>Publicar</Text>
-          </TouchableOpacity>
-        </View>
+        <InputComentario
+          adicionaComentarioCallback={this.adicionaComentario} />
       </View>
     );
   }
@@ -160,11 +151,5 @@ const styles = StyleSheet.create({
   tituloComentario: {
     fontWeight: 'bold',
     marginRight: 5,
-  },
-  novoComentario: {
-    flexDirection: 'row',
-  },
-  campoComentario: {
-    flex: 1,
   }
 });
