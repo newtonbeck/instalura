@@ -14,13 +14,13 @@ export default class Likes extends Component {
   }
 
   render() {
-    const { likeada, likers } = this.props;
+    const { foto } = this.props;
     return (
       <View style={styles.rodape}>
-        <TouchableOpacity onPress={this.props.likeCallback}>
-          <Image style={styles.botaoDeLike} source={this.carregaIcone(likeada)} />
+        <TouchableOpacity onPress={() => this.props.likeCallback(foto.id)}>
+          <Image style={styles.botaoDeLike} source={this.carregaIcone(foto.likeada)} />
         </TouchableOpacity>
-        { this.exibeLikers(likers) }
+        { this.exibeLikers(foto.likers) }
       </View>
     );
   }

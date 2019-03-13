@@ -14,29 +14,6 @@ export default class Post extends Component {
     }
   }
 
-  like = () => {
-    const { foto } = this.state;
-
-    let novosLikers = [];
-    // Adiciona/remove meu usuário da lista de likers
-    if (!foto.likeada) {
-      novosLikers = [
-        ...foto.likers,
-        { login: 'meuUsuario' }
-      ];
-    } else {
-      novosLikers = foto.likers.filter(({ login }) => login !== 'meuUsuario');
-    }
-
-    this.setState({
-      foto: {
-        ...foto,
-        likeada: !foto.likeada,
-        likers: novosLikers
-      }
-    });
-  }
-
   exibeLegenda = () => {
     const { foto } = this.state;
 
@@ -79,6 +56,8 @@ export default class Post extends Component {
 
   render() {
     const { foto } = this.state;
+    const { likeCallback } = this.props;
+
     return (
       <View style={styles.container}>
         <View style={styles.cabecalho}>
@@ -86,7 +65,7 @@ export default class Post extends Component {
           <Text>{foto.loginUsuario}</Text>
         </View>
         <Image source={{uri: foto.urlFoto}} style={styles.foto} />
-        <Likes likeada={foto.likeada} likers={foto.likers} likeCallback={this.like} />
+        <Likes foto={this.props.foto} likeCallback={likeCallback} />
         { this.exibeLegenda() }
         { foto.comentarios.map((comentario) => (
           <View style={styles.comentario}>
