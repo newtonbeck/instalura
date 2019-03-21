@@ -1,35 +1,31 @@
 import React, { Component } from 'react';
-import { View, Text, Image, Dimensions, StyleSheet } from 'react-native';
+import { View, Image, Dimensions, StyleSheet } from 'react-native';
+import Comentario from './Comentario';
+import Cabecalho from './Cabecalho';
+import Like from './Like';
 
 const { width } = Dimensions.get('screen');
 
-export default class Post extends Component {
-  render() {
-    return (
-      <View>
-        <View style={styles.cabecalho}>
-          <Image source={{uri: this.props.post.urlPerfil}} style={styles.fotoDePerfil} />
-          <Text>{this.props.post.loginUsuario}</Text>
-        </View>
-        <Image source={{uri: this.props.post.urlFoto}} style={styles.foto} />
-      </View>
-    );
-  }
-}
+const Post = ({ likeCallback, adicionaComentarioCallback, foto, navegaParaAmigoCallback }) => (
+  <View style={styles.container}>
+    <Cabecalho foto={foto} amigoCallback={navegaParaAmigoCallback} />
+    <Image 
+      source={{uri: foto.urlFoto}} 
+      style={styles.foto}
+      accessible={true}
+      accessibilityLabel={`Imagem do usuário ${foto.loginUsuario}`} />
+    <Like foto={foto} likeCallback={() => likeCallback(foto.id)} />
+    <Comentario foto={foto} adicionaComentarioCallback={adicionaComentarioCallback} />
+  </View>
+);
+
+export default Post;
 
 const styles = StyleSheet.create({
-  cabecalho: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  fotoDePerfil: {
-    marginRight: 10,
-    borderRadius: 20,
-    width: 40,
-    height: 40
+  container: {
   },
   foto: {
     width: width,
-    height: width    
-  }
+    height: width,  
+  },
 });
