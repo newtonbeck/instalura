@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import {
-  StatusBar,
-  ActivityIndicator,
+  StyleSheet,
   View,
+  Text,
   AsyncStorage
 } from 'react-native'
 import Login from './src/Login';
@@ -13,22 +13,27 @@ class Splash extends Component {
   constructor(props) {
     super(props)
   }
-  getToken = async () => {
+
+  async componentDidMount(){
     const token = await AsyncStorage.getItem('token')
-    return token
-  }
-  componentDidMount(){
-    this.props.navigation.navigate(this.getToken() ? 'LoggedStack' : 'UnloggedStack')
+    this.props.navigation.navigate(token ? 'LoggedStack' : 'UnloggedStack')
   }
   render() {
     return (
-      <View>
-        <ActivityIndicator />
-        {<StatusBar />}
+      <View style={styles.container}>
+        <Text>Instalura</Text>
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+});
 
 const UnloggedNavigator = createStackNavigator({
   LoginScreen: {
